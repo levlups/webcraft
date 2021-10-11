@@ -251,8 +251,10 @@ button {
     opacity: .35;
     text-align: right;
 }
-#Joystick-right * {
+#Joystick-right button {
     position: absolute;
+    padding: 0;
+    background: transparent;
 }
 
 body:not(.started) .joystick, body.loading .joystick {
