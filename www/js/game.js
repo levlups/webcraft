@@ -304,8 +304,8 @@ export let Game = {
         fps.incr();
         that.loopTime.add(performance.now() - tm);
         window.requestAnimationFrame(that.loop);
-        // console.log(this.Joystick.value.x, this.Joystick.value.y);
-        that.world.addRotate(new Vector(this.Joystick.value.y * 50, 0, this.Joystick.value.x * 50));
+        let sensitivity = Math.ceil(screen.width * 0.05);
+        that.world.addRotate(new Vector(this.Joystick.value.y * sensitivity, 0, this.Joystick.value.x * sensitivity));
     },
     // Отправка информации о позиции и ориентации игрока на сервер
     sendPlayerState: function() {
