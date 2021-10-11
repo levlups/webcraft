@@ -26,6 +26,33 @@ let gameCtrl = function($scope, $timeout) {
         }
     };
 
+    //
+    $scope.player = {
+        action: function(name, state) {
+            console.log(state, name);
+            switch(name) {
+                case 'atack': {
+                    let button_id = 1;
+                    let shiftKey = false;
+                    Game.world.localPlayer.pickAt.setEvent({button_id: button_id, shiftKey: shiftKey});
+                    break;
+                }
+                case 'jump': {
+                    Game.world.localPlayer.keys[KEY.SPACE] = state;
+                }
+                case 'walk': {
+                    Game.world.localPlayer.keys[KEY.W] = state;
+                }
+                case 'place': {
+                    let button_id = 3;
+                    let shiftKey = false;
+                    Game.world.localPlayer.pickAt.setEvent({button_id: button_id, shiftKey: shiftKey});
+                    break;
+                }
+            }
+        }
+    };
+
     // Texture packs
     $scope.texture_pack = {
         list: [

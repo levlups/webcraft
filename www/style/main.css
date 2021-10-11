@@ -241,6 +241,20 @@ button {
     opacity: .35;
 }
 
-body:not(.started) #Joystick, body.loading #Joystick {
+#Joystick-right {
+    width: 138px;
+    height: 192px;
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 99999;
+    opacity: .35;
+    text-align: right;
+}
+#Joystick-right * {
+    position: absolute;
+}
+
+body:not(.started) .joystick, body.loading .joystick {
     display: none;
 }
