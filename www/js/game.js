@@ -11,6 +11,7 @@ import {BLOCK} from "./blocks.js";
 import {Resources} from "./resources.js";
 import ServerClient from "./server_client.js";
 import {GameMode} from "./game_mode.js";
+import {JoystickController} from './joystick.js';
 
 export {BLOCK};
 
@@ -170,10 +171,14 @@ export let Game = {
                 this.render = new Renderer('renderSurface');
                 return this.load(settings);
             })
-            .then(()=>{
+            .then(() => {
                 return this.render.init(this.world, settings, this.resources);
             })
-            .then(this.postInitGame.bind(this))
+            .then(this.postInitGame.bind(this));
+        // Joystick
+        this.Joystick = new JoystickController('stick', 64, 8, (currentPos) => {
+            // console.log(this.Joystick.value);
+        });
     },
 
     // postInitGame...
@@ -297,6 +302,8 @@ export let Game = {
         fps.incr();
         that.loopTime.add(performance.now() - tm);
         window.requestAnimationFrame(that.loop);
+        // console.log(this.Joystick.value.x, this.Joystick.value.y);
+        that.world.addRotate(new Vector(this.Joystick.value.x, 0, this.Joystick.value.y));
     },
     // Отправка информации о позиции и ориентации игрока на сервер
     sendPlayerState: function() {

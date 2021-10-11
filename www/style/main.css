@@ -231,3 +231,15 @@ button {
 	font-family: minecraftia;
 	font-size: 16px;
 }
+
+#Joystick {
+    width: 128px;
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    z-index: 99999;
+}
+
+body:not(.started) #Joystick {
+    display: none;
+}
