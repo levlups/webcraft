@@ -40,7 +40,8 @@ export default class HUD {
 
         // Splash screen (Loading...)
         this.splash = {
-            loading:    true,
+            loading:    false,
+            loadingO:   true,
             image:      null,
             hud:        null,
             init: function(hud) {
@@ -60,7 +61,17 @@ export default class HUD {
                         cl++;
                     }
                 }
+                this.loadingO = this.loading;
                 this.loading = cl < nc;
+                if(this.loading !== this.loadingO) {
+                    if(this.loading) {
+                        console.log('loading');
+                        document.querySelector('body').classList.add('loading');
+                    } else {
+                        console.log('started');
+                        document.querySelector('body').classList.remove('loading');
+                    }
+                }
                 if(!this.loading) {
                     return false;
                 }

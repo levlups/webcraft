@@ -91,6 +91,7 @@ export let Game = {
     player:             null,
     mouseX:             0,
     mouseY:             0,
+    drawcalls:          0,
     inventory:          null,
     prev_player_state:  null,
     controls:           {
@@ -284,14 +285,15 @@ export let Game = {
     loop() {
         let tm = performance.now();
         let that = this;
-        if(that.controls.enabled) {
+        this.drawcalls = 0;
+        //if(that.controls.enabled) {
             // Simulate physics
             that.physics.simulate();
             // Update local player
             that.player.update();
-        } else {
-            that.player.lastUpdate = null;
-        }
+        //} else {
+        //    that.player.lastUpdate = null;
+        //}
         that.world.update();
         // Draw world
         that.render.setCamera(that.player.getEyePos(), that.player.angles);
@@ -303,7 +305,7 @@ export let Game = {
         that.loopTime.add(performance.now() - tm);
         window.requestAnimationFrame(that.loop);
         // console.log(this.Joystick.value.x, this.Joystick.value.y);
-        that.world.addRotate(new Vector(this.Joystick.value.x, 0, this.Joystick.value.y));
+        that.world.addRotate(new Vector(this.Joystick.value.y * 50, 0, this.Joystick.value.x * 50));
     },
     // Отправка информации о позиции и ориентации игрока на сервер
     sendPlayerState: function() {

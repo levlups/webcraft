@@ -238,8 +238,9 @@ button {
     left: 20px;
     bottom: 20px;
     z-index: 99999;
+    opacity: .35;
 }
 
-body:not(.started) #Joystick {
+body:not(.started) #Joystick, body.loading #Joystick {
     display: none;
 }
