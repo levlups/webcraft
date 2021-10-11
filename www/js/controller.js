@@ -39,9 +39,11 @@ let gameCtrl = function($scope, $timeout) {
                 }
                 case 'jump': {
                     Game.world.localPlayer.keys[KEY.SPACE] = state;
+                    break;
                 }
                 case 'walk': {
                     Game.world.localPlayer.keys[KEY.W] = state;
+                    break;
                 }
                 case 'place': {
                     let button_id = 3;
