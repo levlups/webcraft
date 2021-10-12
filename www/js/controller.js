@@ -33,12 +33,17 @@ let gameCtrl = function($scope, $timeout) {
     //
     $scope.player = {
         action: function(name, state) {
-            console.log(state, name);
+            // console.log(state, name);
+            let pickAt = Game.world.localPlayer.pickAt;
             switch(name) {
                 case 'atack': {
                     let button_id = 1;
                     let shiftKey = false;
-                    Game.world.localPlayer.pickAt.setEvent({button_id: button_id, shiftKey: shiftKey});
+                    if(state) {
+                        pickAt.setEvent({button_id: button_id, shiftKey: shiftKey});
+                    } else {
+                        pickAt.clearEvent();
+                    }
                     break;
                 }
                 case 'jump': {
@@ -52,7 +57,11 @@ let gameCtrl = function($scope, $timeout) {
                 case 'place': {
                     let button_id = 3;
                     let shiftKey = false;
-                    Game.world.localPlayer.pickAt.setEvent({button_id: button_id, shiftKey: shiftKey});
+                    if(state) {
+                        pickAt.setEvent({button_id: button_id, shiftKey: shiftKey});
+                    } else {
+                        pickAt.clearEvent();
+                    }
                     break;
                 }
             }
