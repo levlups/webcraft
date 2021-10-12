@@ -130,6 +130,8 @@ button {
 	top: 0;
 	width: 100vw;
 	height: 100vh;
+    bottom: 0;
+    right: 0;
 }
 
 /* Material selector */
@@ -248,13 +250,16 @@ button {
     right: 20px;
     bottom: 20px;
     z-index: 99999;
-    opacity: .35;
+    opacity: .45;
     text-align: right;
 }
-#Joystick-right button {
+#Joystick-right>*{
     position: absolute;
     padding: 0;
     background: transparent;
+}
+#Joystick-right img {
+    pointer-events: none;
 }
 
 body:not(.started) .joystick, body.loading .joystick {
