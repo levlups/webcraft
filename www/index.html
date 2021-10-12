@@ -172,14 +172,14 @@
 
     </div>
 
-    <div id="Joystick" class="joystick">
+    <div id="Joystick" class="joystick" ng-if="isMobileBrowser()">
         <img src="/media/joystick/joystick-base.png" style="pointer-events: none;" />
         <div id="stick" style="position: absolute; left:32px; top:32px;" style="pointer-events: none;" >
             <img src="/media/joystick/joystick-red.png" />
         </div>
     </div>
 
-    <div id="Joystick-right" class="joystick">
+    <div id="Joystick-right" class="joystick" ng-if="isMobileBrowser()">
         <button style="left: 37px; top: 0;" ng-mousedown="player.action('walk', true)"  ng-mouseup="player.action('walk', false)" ontouchstart="angular.element(this).scope().player.action('walk', true)" ontouchend="angular.element(this).scope().player.action('walk', false)" ><img src="/media/joystick/walk.png" /></button>
         <button style="left: 0; bottom: 64px;" ng-mousedown="player.action('atack', true)" ng-mouseup="player.action('atack', false)" ontouchstart="angular.element(this).scope().player.action('atack', true)" ontouchend="angular.element(this).scope().player.action('atack', false)" ><img src="/media/joystick/atack.png" /></button>
         <button style="right: 0; bottom: 64px;" ng-mousedown="player.action('jump', true)" ng-mouseup="player.action('jump', false)" ontouchstart="angular.element(this).scope().player.action('jump', true)" ontouchend="angular.element(this).scope().player.action('jump', false)" ><img src="/media/joystick/jump.png" /></button>

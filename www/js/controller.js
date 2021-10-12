@@ -26,6 +26,10 @@ let gameCtrl = function($scope, $timeout) {
         }
     };
 
+    $scope.isMobileBrowser = function() {
+        return 'ontouchstart' in document.documentElement;
+    }
+
     //
     $scope.player = {
         action: function(name, state) {

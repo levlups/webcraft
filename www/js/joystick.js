@@ -6,8 +6,14 @@ export class JoystickController {
 
     constructor(stickID, maxDistance, deadzone, callback) {
 
+        this.value = null;
         this.id = stickID;
         let stick = document.getElementById(stickID);
+        
+        if(!stick) {
+            return;
+        }
+
         this.callback = callback;
         // location from which drag begins, used to calculate offsets
         this.dragStart = null;
