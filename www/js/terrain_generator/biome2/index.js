@@ -298,6 +298,9 @@ export default class Terrain_Generator extends Default_Terrain_Generator {
                             ) / 3;
                             if(density * coeff > .5) {
                                 let block_id = BLOCK.DIRT.id;
+                                if(density > .6) {
+                                    block_id = BLOCK.CONCRETE.id;
+                                }
                                 setBlock(x, y, z, block_id);
                             }
                         }
