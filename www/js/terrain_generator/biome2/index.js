@@ -281,12 +281,8 @@ export default class Terrain_Generator extends Default_Terrain_Generator {
                     for(let y = chunk.size.y - 1; y >= 0; y--) {
                         xyz.set(x + chunk.coord.x, y + chunk.coord.y, z + chunk.coord.z);
                         if(xyz.y < UP_LIMIT) {
-                            let density = (
-                                noise3d(xyz.x / (2000 * DENSITY_COEFF), xyz.y / (100 * DENSITY_COEFF), xyz.z / (2000 * DENSITY_COEFF)) / 2 + .5 +
-                                noise3d(xyz.x / (60 * DENSITY_COEFF), xyz.y / (20 * DENSITY_COEFF), xyz.z / (60 * DENSITY_COEFF)) / 2 + .5
-                            ) / 2;
-                            let coeff = 1;
                             let diff = UP_LIMIT - xyz.y;
+                            let coeff = 1;
                             if(diff < FADE_ZONE) {
                                 coeff = diff / FADE_ZONE;
                             } else {
@@ -295,6 +291,11 @@ export default class Terrain_Generator extends Default_Terrain_Generator {
                                     coeff = diff / FADE_ZONE;
                                 }
                             }
+                            let density = (
+                                noise3d(xyz.x / (2000 * DENSITY_COEFF), xyz.y / (100 * DENSITY_COEFF), xyz.z / (2000 * DENSITY_COEFF)) / 2 + .5 +
+                                noise3d(xyz.x / (60 * DENSITY_COEFF), xyz.y / (20 * DENSITY_COEFF), xyz.z / (60 * DENSITY_COEFF)) / 2 + .5 +
+                                noise3d(xyz.x / (110 * DENSITY_COEFF), xyz.z / (40 * DENSITY_COEFF), xyz.y / (110 * DENSITY_COEFF)) / 2 + .5
+                            ) / 3;
                             if(density * coeff > .5) {
                                 let block_id = BLOCK.DIRT.id;
                                 setBlock(x, y, z, block_id);
