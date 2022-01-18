@@ -267,8 +267,45 @@ export default class Terrain_Generator extends Default_Terrain_Generator {
             return chunk.tblocks.id[index];
         };
 
+        const FLYING_ISLAND_MIN     = 6;
+        const FLYING_ISLAND_MAX     = 8;
+        const FADE_ZONE             = 20;
+        const UP_LIMIT              = FLYING_ISLAND_MAX * chunk.size.y;
+        const DOWN_LIMIT            = FLYING_ISLAND_MIN * chunk.size.y;
+
+        // Летающие острова
+        if(chunk.addr.y >= FLYING_ISLAND_MIN && chunk.addr.y <= FLYING_ISLAND_MAX) {
+
+            for(let x = 0; x < chunk.size.x; x++) {
+                for(let z = 0; z < chunk.size.z; z++) {
+                    for(let y = chunk.size.y - 1; y >= 0; y--) {
+                        xyz.set(x + chunk.coord.x, y + chunk.coord.y, z + chunk.coord.z);
+                        if(xyz.y < UP_LIMIT) {
+                            let density = (
+                                noise3d(xyz.x / (2000 * DENSITY_COEFF), xyz.y / (100 * DENSITY_COEFF), xyz.z / (2000 * DENSITY_COEFF)) / 2 + .5 +
+                                noise3d(xyz.x / (60 * DENSITY_COEFF), xyz.y / (20 * DENSITY_COEFF), xyz.z / (60 * DENSITY_COEFF)) / 2 + .5
+                            ) / 2;
+                            let coeff = 1;
+                            let diff = UP_LIMIT - xyz.y;
+                            if(diff < FADE_ZONE) {
+                                coeff = diff / FADE_ZONE;
+                            } else {
+                                diff = xyz.y - DOWN_LIMIT;
+                                if(diff < FADE_ZONE) {
+                                    coeff = diff / FADE_ZONE;
+                                }
+                            }
+                            if(density * coeff > .5) {
+                                let block_id = BLOCK.DIRT.id;
+                                setBlock(x, y, z, block_id);
+                            }
+                        }
+                    }
+                }
+            }
+
         // Endless caves / Бесконечные пещеры нижнего уровня
-        if(chunk.addr.y < -1) {
+        } else if(chunk.addr.y < -1) {
 
             let fill_count = 0;
 
