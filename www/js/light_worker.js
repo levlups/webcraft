@@ -59,6 +59,7 @@ const DIR_DOWN = 5;
 const DIR_MAX_MASK = (1 << 26) - (1 << 6);
 
 const DEFAULT_LIGHT_DAY_DISPERSE = Math.ceil(maxLight / 11);
+const DISPERSE_MIN = 10;
 
 function adjustSrc(srcLight) {
     const amount = srcLight & MASK_SRC_AMOUNT;
@@ -746,6 +747,21 @@ class Chunk {
         this.outerSize = this.lightChunk.outerSize;
         this.len = this.lightChunk.insideLen;
         this.outerLen = this.lightChunk.outerLen;
+
+        this.createDayLight();
+    }
+
+    createDayLight() {
+        if (this.addr.y < 0) {
+            this.dayLightHeight = 1;
+            this.dayLightColumns = new Uint8Array(2);
+            return;
+        }
+
+        const { outerSize } = this;
+
+        this.dayLightHeight = Math.ceil(outerSize.y / DISPERSE_MIN) + 2;
+        this.dayLightColumns = new Uint8Array(2 * outerSize.x * this.dayLightHeight * outerSize.z);
     }
 
     get chunkManager() {
