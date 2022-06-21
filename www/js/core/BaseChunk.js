@@ -4,7 +4,7 @@ import {Vector} from "../helpers.js";
 const tempAABB = new AABB();
 
 export class BaseChunk {
-    constructor({size}) {
+    constructor({size, nibble}) {
         this.outerAABB = new AABB();
         this.safeAABB = new AABB();
         this.pos = new Vector();
@@ -15,6 +15,12 @@ export class BaseChunk {
         this.setPos(Vector.ZERO);
         this.dif26 = [];
         this.rev = null;
+
+        if (nibble) {
+            this.initNibble(nibble);
+        } else {
+            this.clearNibble();
+        }
     }
 
     initSize(size) {
@@ -32,6 +38,27 @@ export class BaseChunk {
         this.cy = outerSize.x * outerSize.z;
         this.cz = outerSize.x;
         this.cw = padding * (this.cx + this.cy + this.cz);
+    }
+
+    clearNibble() {
+        this.nibbleDims = null;
+        this.nibbleStrideBytes = 0;
+        this.nibbleSize = 0;
+        this.nibbleOuterSize = null;
+        this.nibbleOuterLen = 0;
+    }
+
+    initNibble({dims, strideBytes}) {
+        const {padding} = this;
+
+        this.nibbleDims = dims;
+        this.nibbleStrideBytes = strideBytes;
+        this.nibbleSize = new Vector(Math.ceil(this.size.x / dims.x),
+            Math.ceil(this.size.y / dims.y),
+            Math.ceil(this.size.z / dims.z));
+
+        const outerSize = this.nibbleOuterSize = new Vector().copyFrom(this.nibbleSize).addScalarSelf(padding, padding, padding);
+        this.nibbleOuterLen = outerSize.x * outerSize.y * outerSize.z;
     }
 
     /**
@@ -124,29 +151,47 @@ export class BaseChunk {
         this.portals.push(portal);
 
         const inner = this.safeAABB;
-        const aabb = portal.aabb;
+        const {aabb, toRegion} = portal;
+
         tempAABB.setIntersect(inner, aabb);
         if (tempAABB.isEmpty()) {
             return;
         }
+
+        const nibbleSize1 = this.nibbleSize;
+        const nibbleSize2 = toRegion.nibbleSize;
+
+        let nibbleCompatibleX = false;
+        let nibbleCompatibleY = false;
+        let nibbleCompatibleZ = false;
+        if (nibbleSize1 && nibbleSize2) {
+            //TODO: check corner nibble
+            nibbleCompatibleX = nibbleSize1.x === nibbleSize2.x && (this.aabb.x_min - toRegion.aabb.x_min) % nibbleSize1.x === 0
+            nibbleCompatibleY = nibbleSize1.y === nibbleSize2.y && (this.aabb.y_min - toRegion.aabb.y_min) % nibbleSize1.y === 0
+            nibbleCompatibleZ = nibbleSize1.y === nibbleSize2.y && (this.aabb.z_min - toRegion.aabb.z_min) % nibbleSize1.z === 0
+        }
+
         if (tempAABB.width <= tempAABB.height && tempAABB.width <= tempAABB.depth) {
             if (inner.x_min < aabb.x_min && inner.x_max <= aabb.x_max) {
                 inner.x_max = aabb.x_min;
             } else {
                 inner.x_min = aabb.x_max;
             }
+            portal.nibbleCompatible = nibbleCompatibleY && nibbleCompatibleZ;
         } else if (tempAABB.height <= tempAABB.width && tempAABB.height <= tempAABB.depth) {
             if (inner.y_min < aabb.y_min) {
                 inner.y_max = aabb.y_min;
             } else {
                 inner.y_min = aabb.y_max;
             }
+            portal.nibbleCompatible = nibbleCompatibleX && nibbleCompatibleZ;
         } else {
             if (inner.z_min < aabb.z_min) {
                 inner.z_max = aabb.z_min;
             } else {
                 inner.z_min = aabb.z_max;
             }
+            portal.nibbleCompatible = nibbleCompatibleX && nibbleCompatibleY;
         }
     }
 
@@ -226,5 +271,6 @@ export class Portal {
         this.volume = (aabb.maxX - aabb.minX) * (aabb.maxY - aabb.minY) * (aabb.maxZ - aabb.minZ);
         this.fromRegion = fromRegion;
         this.toRegion = toRegion;
+        this.nibbleCompatible = false;
     }
 }

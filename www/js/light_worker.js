@@ -43,6 +43,11 @@ const OFFSET_SOURCE = 0;
 const OFFSET_LIGHT = 1;
 const OFFSET_DAY = 2;
 
+const OFFSET_COLUMN_TOP = 0;
+const OFFSET_COLUMN_BOTTOM = 1;
+const OFFSET_DAY_TOP = 2;
+const OFFSET_DAY_BOTTOM = 3;
+
 const BITS_QUEUE_BLOCK_INDEX = 16;
 const BITS_QUEUE_CHUNK_ID = 15;
 const MASK_QUEUE_BLOCK_INDEX = (1 << BITS_QUEUE_BLOCK_INDEX) - 1;
@@ -732,9 +737,14 @@ class Chunk {
         this.waveCounter = 0;
         this.crc = 0;
 
+        this.disperse = this.addr.y >= 0 ? DISPERSE_MIN : 0;
+
         this.lightChunk = new DataChunk({
             size: args.size,
-            strideBytes: 4
+            strideBytes: 4,
+            nibble: this.disperse > 0 ? {
+                dims: new Vector(1, this.disperse, 1),
+            }: null
         }).setPos(new Vector().copyFrom(args.addr).mul(args.size));
 
         calcDif26(this.lightChunk.outerSize, this.lightChunk.dif26);
@@ -748,20 +758,6 @@ class Chunk {
         this.len = this.lightChunk.insideLen;
         this.outerLen = this.lightChunk.outerLen;
 
-        this.createDayLight();
-    }
-
-    createDayLight() {
-        if (this.addr.y < 0) {
-            this.dayLightHeight = 1;
-            this.dayLightColumns = new Uint8Array(2);
-            return;
-        }
-
-        const { outerSize } = this;
-
-        this.dayLightHeight = Math.ceil(outerSize.y / DISPERSE_MIN) + 2;
-        this.dayLightColumns = new Uint8Array(2 * outerSize.x * this.dayLightHeight * outerSize.z);
     }
 
     get chunkManager() {
@@ -790,7 +786,7 @@ class Chunk {
 
     fillOuter() {
         //checks neighbour chunks
-        const {lightChunk} = this;
+        const {lightChunk, dayLightColumns, dayLightHeight, dayLightStride, dayLightType} = this;
         const {outerSize, portals, shiftCoord, aabb, uint8View, strideBytes, safeAABB, dif26} = lightChunk;
         const sy = outerSize.x * outerSize.z, sx = 1, sz = outerSize.x;
         let found = false;
@@ -823,6 +819,7 @@ class Chunk {
             if (other.aabb.y_min > aabb.y_min) {
                 upPortal = true;
             }
+            const chunk2 = other.rev;
 
             for (let x = p.x_min; x < p.x_max; x++)
                 for (let y = p.y_min; y < p.y_max; y++)
@@ -832,7 +829,6 @@ class Chunk {
                         //TODO: optimize contains here?
                         const f1 = aabb.contains(x, y, z);
                         const f2 = inside2.contains(x, y, z);
-
                         // copy light
                         const light = bytes2[coord2 + OFFSET_LIGHT];
                         if (light > 0) {
@@ -853,19 +849,21 @@ class Chunk {
                             uint8View[coord1 + OFFSET_SOURCE] = bytes2[coord2 + OFFSET_SOURCE]
                         }
 
-                        // daylight
                         const dayLight = bytes2[coord2 + OFFSET_DAY + OFFSET_LIGHT];
                         const dayLightSrc = bytes2[coord2 + OFFSET_DAY + OFFSET_SOURCE];
+                        // daylight
                         uint8View[coord1 + OFFSET_DAY + OFFSET_LIGHT] = dayLight;
-                        if (f2 || f1 && dayLightSrc > 0) {
-                            uint8View[coord1 + OFFSET_DAY + OFFSET_SOURCE] = dayLightSrc;
-                        }
-                        if (f2 && dayLightSrc !== defLight) {
-                            foundDay = true;
+
+                        if (portal.nibbleCompatible) {
+                            if (f2 || f1 && dayLightSrc > 0) {
+                                uint8View[coord1 + OFFSET_DAY + OFFSET_SOURCE] = dayLightSrc;
+                            }
+                            if (f2 && dayLightSrc !== defLight) {
+                                foundDay = true;
+                            }
                         }
                     }
         }
-
         if (upPortal) {
             // fix for black chunks in case respawn above y=80
             // there's a chunk above us => dont try to upload texture before the queue goes down to center of chunk
