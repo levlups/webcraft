@@ -47,20 +47,20 @@ void main() {
     vec2 biome = v_color.rg * (1. - 0.5 * step(0.5, u_mipmap));
 
     float light = 0.0;
+    // Read texture
+    vec4 color = sampleAtlassTexture (mipData, texClamped, biome);
 
     // Game
     if(v_flagQuadSDF == 1.) {
 
-        outColor = sampleAtlassTexture (mipData, texClamped, biome);
         vec4 u_color = vec4(1, 1, 1, 1);
-        float dist = outColor.b;
+        float dist = color.b;
         if(dist < .5) discard;
-        outColor = u_color;
+        color = u_color;
 
-    } else if(u_fogOn) {
-
-        // Read texture
-        vec4 color = sampleAtlassTexture (mipData, texClamped, biome);
+    }
+    
+    if(u_fogOn) {
 
         if (v_animInterp > 0.0) {
             color = mix(
