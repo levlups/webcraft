@@ -51,6 +51,10 @@ async function preLoad () {
         Helpers = module.Helpers;
         VectorCollector = module.VectorCollector;
     });
+    // load font
+    await import('../data/font.js').then(module => {
+        globalThis.alphabet = module;
+    });
     // load module
     await import('./worker/world.js').then(module => {
         WorkerWorldManager = module.WorkerWorldManager;

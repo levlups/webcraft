@@ -66,7 +66,7 @@ export class Compiler {
         const data = JSON.stringify(this.compile_data.blocks, null, 4);
         fs.writeFileSync(`${this.options.output_dir}/blocks.json`, data);
         // copy files
-        for(let fn of ['textures/painting.png']) {
+        for(let fn of this.options.copy_files) {
             fs.copyFile(`./${fn}`, `${this.options.output_dir}/${fn}`, (err) => {
                 if(err) {
                     throw err;
