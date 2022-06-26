@@ -4755,9 +4755,9 @@
                 "no_drop_ao"
             ],
             "texture": {
-                "up": "./textures/potted_azalea_bush_top.png",
+                "up": "./textures/azalea_top.png",
                 "side": "./textures/azalea_side.png",
-                "down": "./textures/potted_azalea_bush_plant.png"
+                "down": "./textures/azalea_plant.png"
             }
         },
         {
@@ -4778,7 +4778,7 @@
             "texture": {
                 "up": "./textures/flowering_azalea_top.png",
                 "side": "./textures/flowering_azalea_side.png",
-                "down": "./textures/potted_azalea_bush_plant.png"
+                "down": "./textures/azalea_plant.png"
             }
         },
         {
