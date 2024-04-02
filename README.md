@@ -1,10 +1,10 @@
-# MadCraft
-Minecraft clone on JS
+# Rocket Raccoon
+Sandbox game that uses the Rocket Raccoon meme coin on JS
 
-- Demo: https://madcraft.io/
+
 - Discord: https://discord.gg/QQw2zadu3T
 - Youtube: https://www.youtube.com/channel/UCAcOZMpzYE8rk62giMgTwdw/videos
-- Reddit: https://www.reddit.com/r/madcraft/
+- Reddit: https://www.reddit.com/r/rocketraccooncoin/
 
 ## Third Party
 + [XM player](https://github.com/a1k0n/jsxm/)
